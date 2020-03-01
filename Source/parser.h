@@ -1,4 +1,4 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
-void parse(char *stringToParse);
+int parse(char *stringToParse);
 #endif

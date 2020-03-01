@@ -13,7 +13,11 @@ int main()
         if (a == '\n')
         {
             pushSymbol(0, &str);
-            parse(str.text);
+            if (parse(str.text) == 0)
+            {
+                clearString(&str);
+            }
+            
             printf(">> ");
         }
     }

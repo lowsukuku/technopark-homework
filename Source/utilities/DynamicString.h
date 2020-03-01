@@ -11,5 +11,6 @@ typedef struct
 } DynamicString;
 
 int pushSymbol(char symbol, DynamicString *target);
+int clearString(DynamicString *target);
 
 #endif

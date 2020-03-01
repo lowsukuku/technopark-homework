@@ -1,6 +1,7 @@
 #include "parser.h"
 #include <stdio.h>
 #include "utilities/DynamicString.h"
+#include "functionDescriptor.h"
 
 #define is_potential_identifier_start(c) ( \
     ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z') || (c) == '_')
@@ -8,24 +9,13 @@
 #define is_potential_identifier_char(c) ( \
     ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z') || ((c) >= '0' && (c) <= '9') || (c) == '_')
 
-typedef struct 
-{
-    int lineNumber;
-    struct LinesList_t *next;
-} LinesList_t;
-
-typedef struct 
-{
-    char *name;
-    unsigned int parametersCount;
-    LinesList_t linesList;
-} FunctionDescriptor_t;
 
 
-void parse(char* stringToParse)
+
+int parse(char* stringToParse)
 {
-    int isIdentifierStarted = 0, isBraceOpened = 0, isBraceClosed = 0, isArgumentStarted = 0;
-    unsigned int parametersCount = 0;
+    int isIdentifierStarted = 0, openingBraces = 0, closingBraces = 0, isArgumentStarted = 0;
+    unsigned int argumentsCount = 0;
     DynamicString identifier = {0};
     FunctionDescriptor_t descriptor = {0};
     while (*stringToParse)
@@ -41,48 +31,51 @@ void parse(char* stringToParse)
         {
             if (is_potential_identifier_char(*stringToParse))
             {
-                if (isBraceOpened == 1)
+                if (openingBraces == 1)
                 {
                     if (isArgumentStarted == 0)
                     {
                         isArgumentStarted = 1;
                     }
                 }
-                else
+                else if (openingBraces == 0)
                 {
                     pushSymbol(*stringToParse, &identifier);
                 }
             }
             else if (*stringToParse == '(')
             {
-                if (isBraceOpened == 0)
-                    isBraceOpened = 1;
-                else
-                {
-                    printf("Error: there should be no nested braces");
-                    break;
-                }
+                openingBraces++;
             }
             else if (*stringToParse == ',')
             {
-                if (isBraceOpened && isArgumentStarted)
+                if (openingBraces-closingBraces == 1 && isArgumentStarted)
                 {
-                    parametersCount++;
+                    argumentsCount++;
                     isArgumentStarted = 0;
-                }
-                else
-                {
-                    printf("Error: invalid syntax");
-                    break;
                 }
             }
             else if (*stringToParse == ')')
             {
-                if (isBraceOpened == 0)
+                closingBraces++;
+                if (closingBraces > openingBraces)
                 {
-                    printf("Error: invalid syntax");
+                    printf("Error: invalid syntax\n");
                     break;
                 }
+                else if (closingBraces == openingBraces)
+                {
+                    if (isArgumentStarted)
+                        argumentsCount++;
+                    pushSymbol(0, &identifier);
+                    printf("%s, %d\n",identifier.text, argumentsCount);
+                    break;
+                }
+            }
+            else if ((*stringToParse == ' ' || *stringToParse == '\t') && closingBraces == openingBraces)
+            {
+                isIdentifierStarted = 0;
+                clearString(&identifier);
             }
         }
         stringToParse++;
@@ -91,4 +84,7 @@ void parse(char* stringToParse)
     {
         free(identifier.text);
     }
+    if (openingBraces > closingBraces)
+        return 1;
+    return 0;
 }

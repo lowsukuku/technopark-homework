@@ -55,3 +55,15 @@ int resizeString(DynamicString *target)
     target->text = allocator;
     return 0;
 }
+
+int clearString(DynamicString *target)
+{
+    if (target == NULL)
+        return -1;
+    if (target->text == NULL)
+    {
+        return -1;
+    }
+    target->tailPosition = 0;
+    return 0;
+}
