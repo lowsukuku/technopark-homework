@@ -15,6 +15,7 @@ int initializeString(DynamicString *target)
         target->text = malloc(INITIAL_STRING_SIZE);
         if (target->text == NULL)
             return -1;
+        target->size = INITIAL_STRING_SIZE;
     }
     return 0;
 }

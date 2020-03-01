@@ -87,5 +87,8 @@ void parse(char* stringToParse)
         }
         stringToParse++;
     }
-    free(identifier.text);
+    if (identifier.text != 0)
+    {
+        free(identifier.text);
+    }
 }
