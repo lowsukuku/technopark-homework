@@ -12,11 +12,14 @@ DescriptorsList_t* addDescriptor(FunctionDescriptor_t descriptor, DescriptorsLis
         return head;
     }
     DescriptorsList_t *node = head;
-    while (node != NULL)
+    while (node->next != NULL)
     {
         node = node->next;
     }
-    node = malloc(sizeof(DescriptorsList_t));
+    node->next = malloc(sizeof(DescriptorsList_t));
+    if (node->next == NULL)
+        return NULL;
+    node = node->next;
     node->descriptor = descriptor;
     node->next = NULL;
     return head;
@@ -34,4 +37,30 @@ DescriptorsList_t* findDescriptor(char* name, DescriptorsList_t* head)
         node = node->next;
     }
     return NULL;
+}
+
+int addEntrance(int line, DescriptorsList_t *node)
+{
+    if (node == NULL)
+        return -1;
+    if (node->descriptor.linesList == NULL)
+    {
+        void *allocator = malloc(sizeof(LinesList_t));
+        if (allocator == NULL)
+            return -1;
+        node->descriptor.linesList = allocator;
+        node->descriptor.linesList->lineNumber = line;
+        node->descriptor.linesList->next = NULL;
+    }
+    LinesList_t *listNode = node->descriptor.linesList;
+    while (listNode->next != NULL)
+    {
+        listNode = listNode->next;
+    }
+    listNode->next = malloc(sizeof(LinesList_t));
+    if (listNode->next == NULL)
+        return -1;
+    listNode = listNode->next;
+    listNode->lineNumber = line;
+    listNode->next = NULL;
 }

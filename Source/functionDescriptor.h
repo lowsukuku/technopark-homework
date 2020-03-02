@@ -11,7 +11,7 @@ typedef struct
 {
     char *name;
     unsigned int parametersCount;
-    LinesList_t linesList;
+    LinesList_t *linesList;
 } FunctionDescriptor_t;
 
 typedef struct 
