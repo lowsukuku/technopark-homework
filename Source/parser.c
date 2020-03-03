@@ -1,5 +1,6 @@
 #include "parser.h"
 #include <stdio.h>
+#include <string.h>
 #include "utilities/DynamicString.h"
 #include "functionDescriptor.h"
 
@@ -9,11 +10,12 @@
 #define is_potential_identifier_char(c) ( \
     ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z') || ((c) >= '0' && (c) <= '9') || (c) == '_')
 
-
+DescriptorsList_t *descriptorsList;
 
 
 int parse(char* stringToParse)
 {
+    
     int isIdentifierStarted = 0, openingBraces = 0, closingBraces = 0, isArgumentStarted = 0;
     unsigned int argumentsCount = 0;
     DynamicString identifier = {0};
@@ -68,6 +70,25 @@ int parse(char* stringToParse)
                     if (isArgumentStarted)
                         argumentsCount++;
                     pushSymbol(0, &identifier);
+                    DescriptorsList_t *searchResult = findDescriptor(identifier.text, descriptorsList);
+                    if (searchResult == NULL)
+                    {
+                        if (descriptorsList != NULL)
+                        {
+                            descriptor.name = identifier.text;
+                            descriptor.parametersCount = argumentsCount;
+                            addEntrance(228, addDescriptor(descriptor, descriptorsList));
+                        }
+                        else
+                        {
+                            descriptorsList = malloc(sizeof(DescriptorsList_t)); //CHECK FOR NULL
+                            descriptorsList->descriptor.linesList = NULL;
+                            strcpy(descriptorsList->descriptor.name, identifier.text); //NAME = NULL!!!!!!!!!
+                            descriptorsList->descriptor.parametersCount = argumentsCount;
+                            descriptorsList->next = NULL;
+                            addEntrance(228, descriptorsList);
+                        } 
+                    }
                     printf("%s, %d\n",identifier.text, argumentsCount);
                     break;
                 }

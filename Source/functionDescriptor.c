@@ -32,8 +32,11 @@ DescriptorsList_t* findDescriptor(char* name, DescriptorsList_t* head)
     DescriptorsList_t *node = head;
     while (node != NULL)
     {
-        if (strcmp(node->descriptor.name, name) == 0)
-            return node;
+        if (node->descriptor.name != NULL)
+        {
+            if (strcmp(node->descriptor.name, name) == 0)
+                return node;
+        }
         node = node->next;
     }
     return NULL;
@@ -51,6 +54,7 @@ int addEntrance(int line, DescriptorsList_t *node)
         node->descriptor.linesList = allocator;
         node->descriptor.linesList->lineNumber = line;
         node->descriptor.linesList->next = NULL;
+        return 0;
     }
     LinesList_t *listNode = node->descriptor.linesList;
     while (listNode->next != NULL)
@@ -63,4 +67,5 @@ int addEntrance(int line, DescriptorsList_t *node)
     listNode = listNode->next;
     listNode->lineNumber = line;
     listNode->next = NULL;
+    return 0;
 }

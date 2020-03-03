@@ -20,4 +20,8 @@ typedef struct
     struct DescriptorsList_t *next;
 } DescriptorsList_t;
 
+DescriptorsList_t *addDescriptor(FunctionDescriptor_t descriptor, DescriptorsList_t *head);
+DescriptorsList_t *findDescriptor(char *name, DescriptorsList_t *head);
+int addEntrance(int line, DescriptorsList_t *node);
+
 #endif
