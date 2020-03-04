@@ -22,7 +22,7 @@ DescriptorsList_t* addDescriptor(FunctionDescriptor_t descriptor, DescriptorsLis
     node = node->next;
     node->descriptor = descriptor;
     node->next = NULL;
-    return head;
+    return node;
 }
 
 DescriptorsList_t* findDescriptor(char* name, DescriptorsList_t* head)

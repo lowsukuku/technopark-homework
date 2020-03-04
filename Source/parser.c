@@ -13,7 +13,7 @@
 DescriptorsList_t *descriptorsList;
 
 
-int parse(char* stringToParse)
+int parse(int line, char* stringToParse)
 {
     
     int isIdentifierStarted = 0, openingBraces = 0, closingBraces = 0, isArgumentStarted = 0;
@@ -75,19 +75,41 @@ int parse(char* stringToParse)
                     {
                         if (descriptorsList != NULL)
                         {
-                            descriptor.name = identifier.text;
-                            descriptor.parametersCount = argumentsCount;
-                            addEntrance(228, addDescriptor(descriptor, descriptorsList));
+                            void* allocator = malloc(identifier.tailPosition);
+                            if (allocator != NULL)
+                            {
+                                descriptor.name = allocator;
+                                strcpy(descriptor.name, identifier.text);
+                                descriptor.parametersCount = argumentsCount;
+                                addEntrance(line, addDescriptor(descriptor, descriptorsList));
+                            }
+                            else
+                            {
+                                //IMPLEMENT
+                            }
                         }
                         else
                         {
                             descriptorsList = malloc(sizeof(DescriptorsList_t)); //CHECK FOR NULL
                             descriptorsList->descriptor.linesList = NULL;
-                            strcpy(descriptorsList->descriptor.name, identifier.text); //NAME = NULL!!!!!!!!!
-                            descriptorsList->descriptor.parametersCount = argumentsCount;
-                            descriptorsList->next = NULL;
-                            addEntrance(228, descriptorsList);
+                            void *allocator = malloc(identifier.tailPosition);
+                            if (allocator != NULL)
+                            {
+                                descriptorsList->descriptor.name = allocator;
+                                strcpy(descriptorsList->descriptor.name, identifier.text); //NAME = NULL!!!!!!!!!
+                                descriptorsList->descriptor.parametersCount = argumentsCount;
+                                descriptorsList->next = NULL;
+                                addEntrance(line, descriptorsList);
+                            }
+                            else
+                            {
+                                //IMPLEMENT
+                            }
                         } 
+                    }
+                    else
+                    {
+                        addEntrance(line, searchResult);
                     }
                     printf("%s, %d\n",identifier.text, argumentsCount);
                     break;
