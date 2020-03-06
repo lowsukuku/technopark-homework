@@ -1,5 +1,4 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
-
-int parse(int line, char *stringToParse);
+int parse(int line, char *stringToParse, size_t stringSize);
 #endif

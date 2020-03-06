@@ -13,7 +13,7 @@
 DescriptorsList_t *descriptorsList;
 
 
-int parse(int line, char* stringToParse)
+int parse(int line, char* stringToParse, size_t stringSize)
 {
     
     int isIdentifierStarted = 0, openingBraces = 0, closingBraces = 0, isArgumentStarted = 0;
