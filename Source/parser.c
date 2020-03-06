@@ -10,6 +10,9 @@
 #define is_potential_identifier_char(c) ( \
     ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z') || ((c) >= '0' && (c) <= '9') || (c) == '_')
 
+#define is_skippable_symbol(c) (\
+    (c) == ' ' || (c) == '\t' || (c) == '\n')
+
 DescriptorsList_t *descriptorsList;
 
 
@@ -17,13 +20,18 @@ int parse(int line, char* stringToParse, size_t stringSize)
 {
     
     int isIdentifierStarted = 0, openingBraces = 0, closingBraces = 0, isArgumentStarted = 0;
+    int skippableSymbolHit = 0;
     unsigned int argumentsCount = 0;
     DynamicString identifier = {0};
     FunctionDescriptor_t descriptor = {0};
     while (*stringToParse)
     {
         if (*stringToParse == '#')
-            break;
+        {
+            stringToParse = strchr(stringToParse, '\n');
+            if (stringToParse == NULL) break;
+            stringToParse++; continue;
+        }
         if (isIdentifierStarted == 0 && is_potential_identifier_start(*stringToParse))
         {
             isIdentifierStarted = 1;
@@ -47,6 +55,7 @@ int parse(int line, char* stringToParse, size_t stringSize)
             }
             else if (*stringToParse == '(')
             {
+                skippableSymbolHit = 0;
                 openingBraces++;
             }
             else if (*stringToParse == ',')
@@ -59,6 +68,7 @@ int parse(int line, char* stringToParse, size_t stringSize)
             }
             else if (*stringToParse == ')')
             {
+                skippableSymbolHit = 0;
                 closingBraces++;
                 if (closingBraces > openingBraces)
                 {
@@ -115,10 +125,9 @@ int parse(int line, char* stringToParse, size_t stringSize)
                     break;
                 }
             }
-            else if ((*stringToParse == ' ' || *stringToParse == '\t') && closingBraces == openingBraces)
+            else if (is_skippable_symbol(*stringToParse))
             {
-                isIdentifierStarted = 0;
-                clearString(&identifier);
+                skippableSymbolHit = 1;
             }
         }
         stringToParse++;
