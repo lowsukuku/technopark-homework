@@ -42,7 +42,7 @@ DescriptorsList_t* findDescriptor(char* name, DescriptorsList_t* head)
     return NULL;
 }
 
-int addEntrance(int line, DescriptorsList_t *node)
+int addEntry(int line, DescriptorsList_t *node)
 {
     if (node == NULL)
         return -1;

@@ -13,8 +13,13 @@
 
 DescriptorsList_t *descriptorsList;
 
-char *getDescriptor(char *stringToParse, FunctionDescriptor_t *upperDescriptor, int *lineIndexPointer)
+char *getDescriptors(char *stringToParse, FunctionDescriptor_t *upperDescriptor, int *lineIndexPointer)
 {
+    if (lineIndexPointer == NULL)
+    {
+        int line = 1;
+        lineIndexPointer = &line;
+    }
     int identifierLine = 0;
     int isIdentifierStarted = 0;
     int argumentsCount = 0;
@@ -55,7 +60,7 @@ char *getDescriptor(char *stringToParse, FunctionDescriptor_t *upperDescriptor, 
         else if (*stringToParse == '(')
         {
             identifierLine = *lineIndexPointer;
-            stringToParse = getDescriptor(stringToParse + 1, &currentDescriptor, lineIndexPointer);
+            stringToParse = getDescriptors(stringToParse + 1, &currentDescriptor, lineIndexPointer);
             if (identifier.text != NULL)
             {
                 DescriptorsList_t *searchResult = findDescriptor(identifier.text, descriptorsList);
@@ -68,7 +73,7 @@ char *getDescriptor(char *stringToParse, FunctionDescriptor_t *upperDescriptor, 
                         {
                             currentDescriptor.name = allocator;
                             strcpy(currentDescriptor.name, identifier.text);
-                            addEntrance(identifierLine, addDescriptor(currentDescriptor, descriptorsList));
+                            addEntry(identifierLine, addDescriptor(currentDescriptor, descriptorsList));
                         }
                         else
                         {
@@ -86,7 +91,7 @@ char *getDescriptor(char *stringToParse, FunctionDescriptor_t *upperDescriptor, 
                             strcpy(descriptorsList->descriptor.name, identifier.text);
                             descriptorsList->descriptor.parametersCount = currentDescriptor.parametersCount;
                             descriptorsList->next = NULL;
-                            addEntrance(identifierLine, descriptorsList);
+                            addEntry(identifierLine, descriptorsList);
                         }
                         else
                         {
@@ -96,9 +101,10 @@ char *getDescriptor(char *stringToParse, FunctionDescriptor_t *upperDescriptor, 
                 }
                 else
                 {
-                    addEntrance(identifierLine, searchResult);
+                    addEntry(identifierLine, searchResult);
                 }
             }
+            memset(&currentDescriptor, 0, sizeof(currentDescriptor));
         }
         else if (*stringToParse == ')')
         {
@@ -106,6 +112,7 @@ char *getDescriptor(char *stringToParse, FunctionDescriptor_t *upperDescriptor, 
             {
                 upperDescriptor->parametersCount++;
             }
+            free(identifier.text);
             return stringToParse;
         }
         else if (isIdentifierStarted == 0)
@@ -126,5 +133,26 @@ char *getDescriptor(char *stringToParse, FunctionDescriptor_t *upperDescriptor, 
         }
         stringToParse++;
     }
+    free(identifier.text);
     return 0;
+}
+
+void cleanEntries(LinesList_t* list)
+{
+    if (list->next != NULL)
+    {
+        cleanEntries(list->next);
+    }
+    free(list);
+}
+
+void cleanup(DescriptorsList_t* list)
+{
+    if (list->next != NULL)
+    {
+        cleanup(list->next);
+    }
+    //free(list->descriptor.name); //PROGRAM FALLS HERE
+    cleanEntries(list->descriptor.linesList);
+    free(list);
 }
