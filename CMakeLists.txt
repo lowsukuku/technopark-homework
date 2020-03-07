@@ -1,3 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 project(technopark-homework)
+set(CMAKE_BUILD_TYPE Debug)
 add_executable(hw1 Source/main.c Source/parser.c Source/functionDescriptor.c Source/io.c Source/utilities/DynamicString.c)
+add_executable(test1 tests/test.c Source/parser.c Source/functionDescriptor.c Source/io.c Source/utilities/DynamicString.c)

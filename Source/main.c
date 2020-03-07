@@ -5,7 +5,8 @@
 int main()
 {
     char *input = getInput();
-    getDescriptors(input, NULL, NULL);
+    int line = 1;
+    getDescriptors(input, NULL, &line);
     printDescriptors(descriptorsList);
     cleanup(descriptorsList);
     free(input);

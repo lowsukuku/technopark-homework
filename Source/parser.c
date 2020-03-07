@@ -152,7 +152,7 @@ void cleanup(DescriptorsList_t* list)
     {
         cleanup(list->next);
     }
-    //free(list->descriptor.name); //PROGRAM FALLS HERE
+    free(list->descriptor.name); //PROGRAM FALLS HERE
     cleanEntries(list->descriptor.linesList);
     free(list);
 }
