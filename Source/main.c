@@ -13,16 +13,12 @@ int main()
         pushSymbol(a, &str);
         if (a == '\n')
         {
-            pushSymbol(0, &str);
-            if (parse(line, str.text, str.size) == 0)
-            {
-                clearString(&str);
-            }
             line++;
             printf("%d>> ", line);
         }
     }
-
+    line = 1;
+    getDescriptor(str.text, NULL, &line);
     return 0;
 }
 

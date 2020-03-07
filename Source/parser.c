@@ -1,8 +1,6 @@
 #include "parser.h"
 #include <stdio.h>
 #include <string.h>
-#include "utilities/DynamicString.h"
-#include "functionDescriptor.h"
 
 #define is_potential_identifier_start(c) ( \
     ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z') || (c) == '_')
@@ -10,133 +8,123 @@
 #define is_potential_identifier_char(c) ( \
     ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z') || ((c) >= '0' && (c) <= '9') || (c) == '_')
 
-#define is_skippable_symbol(c) (\
+#define is_skippable_character(c) ( \
     (c) == ' ' || (c) == '\t' || (c) == '\n')
 
 DescriptorsList_t *descriptorsList;
 
-
-int parse(int line, char* stringToParse, size_t stringSize)
+char *getDescriptor(char *stringToParse, FunctionDescriptor_t *upperDescriptor, int *lineIndexPointer)
 {
-    
-    int isIdentifierStarted = 0, openingBraces = 0, closingBraces = 0, isArgumentStarted = 0;
-    int skippableSymbolHit = 0;
-    unsigned int argumentsCount = 0;
+    int identifierLine = 0;
+    int isIdentifierStarted = 0;
+    int argumentsCount = 0;
     DynamicString identifier = {0};
-    FunctionDescriptor_t descriptor = {0};
+    FunctionDescriptor_t currentDescriptor = {0};
     while (*stringToParse)
     {
         if (*stringToParse == '#')
         {
             stringToParse = strchr(stringToParse, '\n');
-            if (stringToParse == NULL) break;
-            stringToParse++; continue;
+            continue;
         }
-        if (isIdentifierStarted == 0 && is_potential_identifier_start(*stringToParse))
+        if (*stringToParse == '\'')
         {
-            isIdentifierStarted = 1;
-            pushSymbol(*stringToParse, &identifier);
+            stringToParse = strchr(stringToParse + 1, '\'') + 1;
+            continue;
         }
-        else if (isIdentifierStarted == 1)
+        if (*stringToParse == '"')
         {
-            if (is_potential_identifier_char(*stringToParse))
+            stringToParse = strchr(stringToParse + 1, '"') + 1;
+            continue;
+        }
+        if (is_skippable_character(*stringToParse))
+        {
+            if (*stringToParse == '\n')
             {
-                if (openingBraces == 1)
+                (*lineIndexPointer)++;
+            }
+            isIdentifierStarted = 0;
+        }
+        else if (*stringToParse == ',')
+        {
+            if (upperDescriptor != NULL)
+            {
+                upperDescriptor->parametersCount++;
+            }
+        }
+        else if (*stringToParse == '(')
+        {
+            identifierLine = *lineIndexPointer;
+            stringToParse = getDescriptor(stringToParse + 1, &currentDescriptor, lineIndexPointer);
+            if (identifier.text != NULL)
+            {
+                DescriptorsList_t *searchResult = findDescriptor(identifier.text, descriptorsList);
+                if (searchResult == NULL)
                 {
-                    if (isArgumentStarted == 0)
+                    if (descriptorsList != NULL)
                     {
-                        isArgumentStarted = 1;
-                    }
-                }
-                else if (openingBraces == 0)
-                {
-                    pushSymbol(*stringToParse, &identifier);
-                }
-            }
-            else if (*stringToParse == '(')
-            {
-                skippableSymbolHit = 0;
-                openingBraces++;
-            }
-            else if (*stringToParse == ',')
-            {
-                if (openingBraces-closingBraces == 1 && isArgumentStarted)
-                {
-                    argumentsCount++;
-                    isArgumentStarted = 0;
-                }
-            }
-            else if (*stringToParse == ')')
-            {
-                skippableSymbolHit = 0;
-                closingBraces++;
-                if (closingBraces > openingBraces)
-                {
-                    printf("Error: invalid syntax\n");
-                    break;
-                }
-                else if (closingBraces == openingBraces)
-                {
-                    if (isArgumentStarted)
-                        argumentsCount++;
-                    pushSymbol(0, &identifier);
-                    DescriptorsList_t *searchResult = findDescriptor(identifier.text, descriptorsList);
-                    if (searchResult == NULL)
-                    {
-                        if (descriptorsList != NULL)
+                        void *allocator = malloc(identifier.tailPosition);
+                        if (allocator != NULL)
                         {
-                            void* allocator = malloc(identifier.tailPosition);
-                            if (allocator != NULL)
-                            {
-                                descriptor.name = allocator;
-                                strcpy(descriptor.name, identifier.text);
-                                descriptor.parametersCount = argumentsCount;
-                                addEntrance(line, addDescriptor(descriptor, descriptorsList));
-                            }
-                            else
-                            {
-                                //IMPLEMENT
-                            }
+                            currentDescriptor.name = allocator;
+                            strcpy(currentDescriptor.name, identifier.text);
+                            addEntrance(identifierLine, addDescriptor(currentDescriptor, descriptorsList));
                         }
                         else
                         {
-                            descriptorsList = malloc(sizeof(DescriptorsList_t)); //CHECK FOR NULL
-                            descriptorsList->descriptor.linesList = NULL;
-                            void *allocator = malloc(identifier.tailPosition);
-                            if (allocator != NULL)
-                            {
-                                descriptorsList->descriptor.name = allocator;
-                                strcpy(descriptorsList->descriptor.name, identifier.text); //NAME = NULL!!!!!!!!!
-                                descriptorsList->descriptor.parametersCount = argumentsCount;
-                                descriptorsList->next = NULL;
-                                addEntrance(line, descriptorsList);
-                            }
-                            else
-                            {
-                                //IMPLEMENT
-                            }
-                        } 
+                            //IMPLEMENT
+                        }
                     }
                     else
                     {
-                        addEntrance(line, searchResult);
+                        descriptorsList = malloc(sizeof(DescriptorsList_t)); //CHECK FOR NULL
+                        descriptorsList->descriptor.linesList = NULL;
+                        void *allocator = malloc(identifier.tailPosition);
+                        if (allocator != NULL)
+                        {
+                            descriptorsList->descriptor.name = allocator;
+                            strcpy(descriptorsList->descriptor.name, identifier.text);
+                            descriptorsList->descriptor.parametersCount = currentDescriptor.parametersCount;
+                            descriptorsList->next = NULL;
+                            addEntrance(identifierLine, descriptorsList);
+                        }
+                        else
+                        {
+                            //IMPLEMENT
+                        }
                     }
-                    printf("%s, %d\n",identifier.text, argumentsCount);
-                    break;
+                }
+                else
+                {
+                    addEntrance(identifierLine, searchResult);
                 }
             }
-            else if (is_skippable_symbol(*stringToParse))
+        }
+        else if (*stringToParse == ')')
+        {
+            if (upperDescriptor->parametersCount > 0 || isIdentifierStarted)
             {
-                skippableSymbolHit = 1;
+                upperDescriptor->parametersCount++;
+            }
+            return stringToParse;
+        }
+        else if (isIdentifierStarted == 0)
+        {
+            if (is_potential_identifier_start(*stringToParse))
+            {
+                isIdentifierStarted = 1;
+                clearString(&identifier);
+                pushSymbol(*stringToParse, &identifier);
+            }
+        }
+        else
+        {
+            if (is_potential_identifier_char(*stringToParse))
+            {
+                pushSymbol(*stringToParse, &identifier);
             }
         }
         stringToParse++;
     }
-    if (identifier.text != 0)
-    {
-        free(identifier.text);
-    }
-    if (openingBraces > closingBraces)
-        return 1;
     return 0;
 }

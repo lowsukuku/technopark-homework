@@ -1,4 +1,5 @@
 #include "DynamicString.h"
+#include "string.h"
 
 #define INITIAL_STRING_SIZE 50
 
@@ -13,6 +14,7 @@ int initializeString(DynamicString *target)
     if (target->text == NULL)
     {
         target->text = malloc(INITIAL_STRING_SIZE);
+        memset(target->text, 0, INITIAL_STRING_SIZE);
         if (target->text == NULL)
             return -1;
         target->size = INITIAL_STRING_SIZE;
@@ -51,8 +53,9 @@ int resizeString(DynamicString *target)
     void *allocator = realloc(target->text, newSize);
     if (allocator == NULL)
         return -1;
-    target->size = newSize;
     target->text = allocator;
+    memset(target->text + target->size, 0, target->size);
+    target->size = newSize;
     return 0;
 }
 
@@ -65,5 +68,6 @@ int clearString(DynamicString *target)
         return -1;
     }
     target->tailPosition = 0;
+    memset(target->text, 0, target->size);
     return 0;
 }
