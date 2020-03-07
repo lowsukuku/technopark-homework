@@ -17,4 +17,4 @@ script:
     - cd build
     - cmake ../
     - make
-    - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./tests
+    - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes build/hw
