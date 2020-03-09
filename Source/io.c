@@ -1,15 +1,15 @@
 #include "io.h"
 
 #include "utilities/DynamicString.h"
-#include <stdio.h>
 
-char *getInput()
+
+char *getInput(FILE* stream)
 {
     int line = 1;
     printf("Enter your python code here. Escape character is Ctrl+D for Linux, Ctrl+Z and Enter for Windows\n%d>> ", line);
     int a = 0;
     DynamicString str = {0};
-    while ((a = getchar()) != EOF)
+    while ((a = getc(stream)) != EOF)
     {
         pushSymbol(a, &str);
         if (a == '\n')

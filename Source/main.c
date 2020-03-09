@@ -4,7 +4,7 @@
 
 int main()
 {
-    char *input = getInput();
+    char *input = getInput(stdin);
     int line = 1;
     getDescriptors(input, NULL, &line);
     printDescriptors(descriptorsList);
