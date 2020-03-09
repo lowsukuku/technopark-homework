@@ -1,20 +1,20 @@
 #ifndef _FUNCTIONAL_DESCRIPTOR_H
 #define _FUNCTIONAL_DESCRIPTOR_H
 
-typedef struct
+typedef struct LinesList_t
 {
     int lineNumber;
     struct LinesList_t *next;
 } LinesList_t;
 
-typedef struct
+typedef struct FunctionDescriptor_t
 {
     char *name;
     unsigned int parametersCount;
     LinesList_t *linesList;
 } FunctionDescriptor_t;
 
-typedef struct 
+typedef struct DescriptorsList_t
 {
     FunctionDescriptor_t descriptor;
     struct DescriptorsList_t *next;
