@@ -1,0 +1,30 @@
+# This is a basic workflow to help you get started with Actions
+
+language: c
+dist: xenial
+compiler: gcc
+sudo: required
+install:
+    - sudo apt-get update
+     #Install cmake
+    - sudo apt install -y cmake
+
+     #Install valgrind
+    - sudo apt-get install -y valgrind
+
+    #Install cppcheck
+    - sudo apt-get install -y cppcheck
+
+script:
+    - mkdir build
+    - cd build
+    - cmake ../
+    - make testTarget
+    - cppcheck ../ -ibuild
+    - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./test1
+    - echo "HERE IS THE REFERENCE SCRIPT"
+    - cat ../tests/reference.py
+    - echo "HERE IS THE REFERENCE OUTPUT"
+    - cat ../tests/referenceOutput.txt
+    - current_sha=$(git rev-parse HEAD)
+    - bash <(curl -s https://codecov.io/bash) -C $current_sha

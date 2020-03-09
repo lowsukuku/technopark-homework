@@ -1,0 +1,20 @@
+
+function name: input
+arguments: 0
+lines: 5, 12,   
+
+function name: random.randint
+arguments: 2
+lines: 7,   
+
+function name: format
+arguments: 1
+lines: 8, 26,   
+
+function name: print
+arguments: 1
+lines: 8, 17, 20, 26,   
+
+function name: int
+arguments: 1
+lines: 12,   
