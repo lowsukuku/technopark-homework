@@ -27,3 +27,28 @@ TEST(test, test1)
     }
     fclose(file);
 }
+
+TEST(test, stringResizeTest)
+{
+    DynamicString testString = {0};
+    char testMessage[] = "This message should trigger dynamic string resize operation";
+    char *messagePointer = testMessage; 
+    while(*messagePointer)
+    {
+        pushSymbol(*messagePointer, &testString);
+        messagePointer++;
+    }
+    ASSERT_STREQ(testString.text, testMessage);
+    ASSERT_GT(testString.size, 50);
+    ASSERT_EQ(testString.tailPosition, strlen(testMessage));
+    free(testString.text);
+}
+
+TEST(test, nullDescriptorsListTest)
+{
+    FunctionDescriptor_t testDescriptor = {(char *)"test",0,0};
+    DescriptorsList_t* testList = addDescriptor(testDescriptor, NULL);
+    ASSERT_TRUE(testList != NULL);
+    ASSERT_STREQ(testList->descriptor.name, testDescriptor.name);
+    free(testList);
+}
