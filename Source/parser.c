@@ -68,7 +68,7 @@ char *getDescriptors(char *stringToParse, FunctionDescriptor_t *upperDescriptor,
                 {
                     if (descriptorsList != NULL)
                     {
-                        void *allocator = malloc(identifier.tailPosition);
+                        void *allocator = malloc(identifier.tailPosition + 1);
                         if (allocator != NULL)
                         {
                             currentDescriptor.name = allocator;
@@ -84,7 +84,7 @@ char *getDescriptors(char *stringToParse, FunctionDescriptor_t *upperDescriptor,
                     {
                         descriptorsList = malloc(sizeof(DescriptorsList_t)); //CHECK FOR NULL
                         descriptorsList->descriptor.linesList = NULL;
-                        void *allocator = malloc(identifier.tailPosition);
+                        void *allocator = malloc(identifier.tailPosition + 1);
                         if (allocator != NULL)
                         {
                             descriptorsList->descriptor.name = allocator;
