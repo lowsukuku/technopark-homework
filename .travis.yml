@@ -17,4 +17,5 @@ script:
     - cd build
     - cmake ../
     - make
+    - cppcheck --project=compile-commands.json ../ -ibuild
     - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./test1
