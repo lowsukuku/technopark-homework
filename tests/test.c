@@ -10,7 +10,7 @@ int main()
     fseek(file , 0 , SEEK_END);
     size_t fileSize = ftell(file);
     rewind(file);
-    char *input = malloc(fileSize);
+    char *input = malloc(fileSize + 1);
     fread(input, 1, fileSize, file);
     int line = 1;
     getDescriptors(input, NULL, &line);
