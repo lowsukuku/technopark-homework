@@ -31,7 +31,7 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 # include_directories(${GTEST_INCLUDE_DIRS})
 
 set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_custom_target(testTarget COMMAND make gtest && make gtest_main && mv lib/libgtest_main.a lib/libgtest_maind.a && mv lib/libgtest.a lib/libgtestd.a && make test1)
 add_executable(hw1 Source/main.c Source/parser.c Source/functionDescriptor.c Source/io.c Source/utilities/DynamicString.c)
 add_executable(test1 tests/gtest_launcher.cpp tests/test.cpp Source/parser.c Source/functionDescriptor.c Source/io.c Source/utilities/DynamicString.c)
