@@ -1,7 +1,7 @@
 # This is a basic workflow to help you get started with Actions
 
 language: c
-dist: ubuntu-latest
+dist: xenial
 compiler: gcc
 sudo: required
 install:
@@ -12,6 +12,10 @@ install:
 
      #Install valgrind
     - sudo apt-get install -y valgrind
+
+    #Install cppcheck
+    - sudo apt-get install -y cppcheck
+
 script:
     - mkdir build
     - cd build
