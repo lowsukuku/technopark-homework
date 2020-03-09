@@ -22,4 +22,5 @@ script:
     - make testTarget
     - cppcheck ../ -ibuild
     - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./test1
-    - bash <(curl -s https://codecov.io/bash)
+    - current_sha=$(git rev-parse HEAD)
+    - bash <(curl -s https://codecov.io/bash) -C $current_sha
