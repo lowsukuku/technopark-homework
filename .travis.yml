@@ -6,7 +6,8 @@ compiler: gcc
 sudo: required
 install:
     - sudo apt-get update
-
+    - sudo apt-get install gcc
+    - sudo apt-get install g++
      #Install cmake
     - sudo apt install -y cmake
 
