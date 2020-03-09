@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(technopark-homework)
 
-set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "-std=c++11 -coverage")
+set(CMAKE_C_FLAGS "-coverage")
+
 # Download and unpack googletest at configure time
 configure_file(tests/CMakeLists.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
