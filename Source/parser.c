@@ -6,14 +6,13 @@
     ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z') || (c) == '_')
 
 #define is_potential_identifier_char(c) ( \
-    ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z') || ((c) >= '0' && (c) <= '9') || (c) == '_')
+    ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z') || ((c) >= '0' && (c) <= '9') || (c) == '_' || (c) == '.')
 
 #define is_skippable_character(c) ( \
     (c) == ' ' || (c) == '\t' || (c) == '\n')
 
-DescriptorsList_t *descriptorsList;
 
-char *getDescriptors(char *stringToParse, FunctionDescriptor_t *upperDescriptor, int *lineIndexPointer)
+char *getDescriptors(char *stringToParse, FunctionDescriptor_t *upperDescriptor, int *lineIndexPointer, DescriptorsList_t **descriptorsList)
 {
     if (lineIndexPointer == NULL)
     {
@@ -60,20 +59,20 @@ char *getDescriptors(char *stringToParse, FunctionDescriptor_t *upperDescriptor,
         else if (*stringToParse == '(')
         {
             identifierLine = *lineIndexPointer;
-            stringToParse = getDescriptors(stringToParse + 1, &currentDescriptor, lineIndexPointer);
+            stringToParse = getDescriptors(stringToParse + 1, &currentDescriptor, lineIndexPointer, descriptorsList);
             if (identifier.text != NULL)
             {
-                DescriptorsList_t *searchResult = findDescriptor(identifier.text, descriptorsList);
+                DescriptorsList_t *searchResult = findDescriptor(identifier.text, *descriptorsList);
                 if (searchResult == NULL)
                 {
-                    if (descriptorsList != NULL)
+                    if (*descriptorsList != NULL)
                     {
                         void *allocator = malloc(identifier.tailPosition + 1);
                         if (allocator != NULL)
                         {
                             currentDescriptor.name = allocator;
                             strcpy(currentDescriptor.name, identifier.text);
-                            addEntry(identifierLine, addDescriptor(currentDescriptor, descriptorsList));
+                            addEntry(identifierLine, addDescriptor(currentDescriptor, *descriptorsList));
                         }
                         else
                         {
@@ -82,16 +81,16 @@ char *getDescriptors(char *stringToParse, FunctionDescriptor_t *upperDescriptor,
                     }
                     else
                     {
-                        descriptorsList = malloc(sizeof(DescriptorsList_t)); //CHECK FOR NULL
-                        descriptorsList->descriptor.linesList = NULL;
+                        *descriptorsList = malloc(sizeof(DescriptorsList_t)); //CHECK FOR NULL
+                        (*descriptorsList)->descriptor.linesList = NULL;
                         void *allocator = malloc(identifier.tailPosition + 1);
                         if (allocator != NULL)
                         {
-                            descriptorsList->descriptor.name = allocator;
-                            strcpy(descriptorsList->descriptor.name, identifier.text);
-                            descriptorsList->descriptor.parametersCount = currentDescriptor.parametersCount;
-                            descriptorsList->next = NULL;
-                            addEntry(identifierLine, descriptorsList);
+                            (*descriptorsList)->descriptor.name = allocator;
+                            strcpy((*descriptorsList)->descriptor.name, identifier.text);
+                            (*descriptorsList)->descriptor.parametersCount = currentDescriptor.parametersCount;
+                            (*descriptorsList)->next = NULL;
+                            addEntry(identifierLine, *descriptorsList);
                         }
                         else
                         {

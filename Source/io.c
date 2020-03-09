@@ -21,23 +21,23 @@ char *getInput(FILE* stream)
     return str.text;
 }
 
-void printEntries(LinesList_t* head)
+void printEntries(LinesList_t* head, FILE* stream)
 {
-    printf("lines: ");
+    fprintf(stream, "lines: ");
     while (head != NULL)
     {
-        printf("%d, ", head->lineNumber);
+        fprintf(stream, "%d, ", head->lineNumber);
         head = head->next;
     }
-    printf("\b\b  \n");
+    fprintf(stream, "\b\b  \n");
 }
 
-void printDescriptors(DescriptorsList_t *head)
+void printDescriptors(DescriptorsList_t *head, FILE* stream)
 {
     while (head != NULL)
     {
-        printf("\nfunction name: %s\narguments: %d\n", head->descriptor.name, head->descriptor.parametersCount);
-        printEntries(head->descriptor.linesList);
+        fprintf(stream, "\nfunction name: %s\narguments: %d\n", head->descriptor.name, head->descriptor.parametersCount);
+        printEntries(head->descriptor.linesList, stream);
         head = head->next;
     }  
 }

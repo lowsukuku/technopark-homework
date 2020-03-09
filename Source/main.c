@@ -6,9 +6,10 @@ int main()
 {
     char *input = getInput(stdin);
     int line = 1;
-    getDescriptors(input, NULL, &line);
-    printDescriptors(descriptorsList);
-    cleanup(descriptorsList);
+    DescriptorsList_t* list = NULL;
+    getDescriptors(input, NULL, &line, &list);
+    printDescriptors(list, stdout);
+    cleanup(list);
     free(input);
     getchar();
     return 0;

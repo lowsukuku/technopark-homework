@@ -22,5 +22,9 @@ script:
     - make testTarget
     - cppcheck ../ -ibuild
     - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./test1
+    - echo "HERE IS THE REFERENCE SCRIPT"
+    - cat ../tests/reference.py
+    - echo "HERE IS THE REFERENCE OUTPUT"
+    - cat ../tests/referenceOutput.txt
     - current_sha=$(git rev-parse HEAD)
     - bash <(curl -s https://codecov.io/bash) -C $current_sha

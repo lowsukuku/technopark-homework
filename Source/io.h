@@ -3,5 +3,5 @@
 #include "parser.h"
 #include <stdio.h>
 char *getInput(FILE* stream);
-void printDescriptors(DescriptorsList_t *head);
+void printDescriptors(DescriptorsList_t *head, FILE* stream);
 #endif

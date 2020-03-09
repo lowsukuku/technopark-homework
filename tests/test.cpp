@@ -13,9 +13,10 @@ TEST(test, test1)
     {
         char *input = getInput(file);
         int line = 1;
-        getDescriptors(input, NULL, &line);
-        printDescriptors(descriptorsList);
-        cleanup(descriptorsList);
+        DescriptorsList_t* list = NULL;
+        getDescriptors(input, NULL, &line, &list);
+        printDescriptors(list, stdout);
+        cleanup(list);
         free(input);
     }
     fclose(file);
@@ -44,4 +45,36 @@ TEST(test, nullDescriptorsListTest)
     ASSERT_TRUE(testList != NULL);
     ASSERT_STREQ(testList->descriptor.name, testDescriptor.name);
     free(testList);
+}
+
+TEST(pytests, t1)
+{
+    FILE *outFile = fopen("testOutput", "w+");
+    FILE *inFile = fopen("../tests/reference.py", "r");
+    char *input = getInput(inFile);
+    int line = 1;
+    DescriptorsList_t *list = NULL;
+    getDescriptors(input, NULL, &line, &list);
+    printDescriptors(list, outFile);
+    cleanup(list);
+    fclose(outFile);
+    fclose(inFile);
+    free(input);
+    outFile = fopen("testOutput", "r");
+    fseek(outFile, 0, SEEK_END);
+    size_t fSize = ftell(outFile);
+    rewind(outFile);
+    char *output = (char *)calloc(fSize + 1, sizeof(char));
+    fread(output, 1, fSize, outFile);
+    FILE *refFile = fopen("../tests/referenceOutput.txt", "r");
+    fseek(refFile, 0, SEEK_END);
+    fSize = ftell(refFile);
+    rewind(refFile);
+    char *refOut = (char *)calloc(fSize + 1, sizeof(char));
+    fread(refOut, 1, fSize, refFile);
+    ASSERT_STREQ(output, refOut);
+    fclose(outFile);
+    fclose(refFile);
+    free(output);
+    free(refOut);
 }
