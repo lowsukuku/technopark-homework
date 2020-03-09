@@ -4,19 +4,22 @@
 
 int main()
 {
-    FILE *file = fopen("../tests/testscript.py","r");
+    FILE *file = fopen("../tests/testscript.py", "r");
     if (file != NULL)
     {
-    fseek(file , 0 , SEEK_END);
-    size_t fileSize = ftell(file);
-    rewind(file);
-    char *input = malloc(fileSize + 1);
-    fread(input, 1, fileSize, file);
-    int line = 1;
-    getDescriptors(input, NULL, &line);
-    printDescriptors(descriptorsList);
-    cleanup(descriptorsList);
-    free(input);
+        fseek(file, 0, SEEK_END);
+        size_t fileSize = ftell(file);
+        rewind(file);
+        char* input = calloc(fileSize + 1, 1);
+        if (input != NULL)
+        {
+            fread(input, 1, fileSize, file);
+            int line = 1;
+            getDescriptors(input, NULL, &line);
+            printDescriptors(descriptorsList);
+            cleanup(descriptorsList);
+            free(input);
+        }
     }
     fclose(file);
     return 0;

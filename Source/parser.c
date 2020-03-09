@@ -133,7 +133,10 @@ char *getDescriptors(char *stringToParse, FunctionDescriptor_t *upperDescriptor,
         }
         stringToParse++;
     }
-    free(identifier.text);
+    if (identifier.text != NULL)
+    {
+        free(identifier.text);
+    }
     return 0;
 }
 
