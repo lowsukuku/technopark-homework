@@ -1,8 +1,12 @@
+extern "C"
+{
 #include "../Source/io.h"
 #include "../Source/parser.h"
+}
 #include <stdio.h>
+#include <gtest/gtest.h>
 
-int main()
+TEST(test, test1)
 {
     FILE *file = fopen("../tests/testscript.py", "r");
     if (file != NULL)
@@ -10,7 +14,7 @@ int main()
         fseek(file, 0, SEEK_END);
         size_t fileSize = ftell(file);
         rewind(file);
-        char* input = calloc(fileSize + 1, 1);
+        char* input = (char *)calloc(fileSize + 1, 1);
         if (input != NULL)
         {
             fread(input, 1, fileSize, file);
@@ -22,5 +26,4 @@ int main()
         }
     }
     fclose(file);
-    return 0;
 }

@@ -6,8 +6,6 @@ compiler: gcc
 sudo: required
 install:
     - sudo apt-get update
-    - sudo apt-get install gcc
-    - sudo apt-get install g++
      #Install cmake
     - sudo apt install -y cmake
 
@@ -21,6 +19,6 @@ script:
     - mkdir build
     - cd build
     - cmake ../
-    - make
+    - make testTarget
     - cppcheck --project=compile-commands.json ../ -ibuild
     - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./test1
